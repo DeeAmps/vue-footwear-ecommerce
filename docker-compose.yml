@@ -1,0 +1,36 @@
+version: '3'
+services:
+  frontend:
+    build:
+      context: ./vue-frontend
+      dockerfile: Dockerfile
+    depends_on:
+      - backend
+    ports:
+      - "8080:8080"
+  backend:
+    build:
+      context: ./node-backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/src
+      - /node_modules
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_USER=user101
+      - DB_PASS=password101
+      - DB_NAME=fabolousfootwear
+  db:
+    image: postgres:9.6.2-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user101
+      POSTGRES_PASSWORD: password101
+      POSTGRES_DB: fabolousfootwear
+    volumes:
+      - db-data:/var/lib/postgresql/data
